@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -10,6 +10,8 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const segments = useSegments()
+  const isLoginScreen: boolean = segments[0] === '(tabs)'
 
   return (
     <Tabs
@@ -18,7 +20,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
+        tabBarStyle: isLoginScreen ? {display: 'none'} : Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
@@ -34,11 +36,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+      name="requestAccount"
+      options={{
+        title: 'Solicitar cuenta',
+        tabBarIcon: ({color}) => <IconSymbol size={28} name="book.and.wrench.fill" color={color}/>
+      }}
       />
     </Tabs>
   );

@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e7f17c30-a7e4-4b7a-9b0d-0edb6edf53f3"
+      }
+    },
+    "owner": "thomazo"
   }
 }
