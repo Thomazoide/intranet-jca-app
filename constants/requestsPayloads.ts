@@ -11,3 +11,7 @@ export interface AddFileRequest {
 export interface AddManyFilesRequest {
     files: AddFileRequest[];
 }
+
+export interface ValidateTokenRequest {
+    token: string;
+}

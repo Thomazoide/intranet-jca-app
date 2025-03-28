@@ -8,6 +8,7 @@ import { LoginSuccessResponse } from "@/constants/responsePayloads";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Circle } from "react-native-progress";
 import { router } from "expo-router";
+import { format, validate } from "rut.js"
 
 export default function LoginForm() {
     const [rut, setRut] = useState<string>("");
@@ -16,13 +17,18 @@ export default function LoginForm() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error>();
     async function submitForm() {
+        const newRut = format(rut, { dots: false })
         // Aquí se debería hacer la petición a la API
         const payload: LoginPayload = {
-          rut,
+          rut: newRut,
           password
         }
         try{  
             setLoading(true)
+            const isValid = validate(newRut)
+            if(!isValid){
+                throw new Error("Rut inválido")
+            }
             const response = await fetch(API_URL+"login", {
                 method: 'POST',
                 headers: {

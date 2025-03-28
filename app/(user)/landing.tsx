@@ -6,7 +6,9 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/models/user.model";
-import { useNavigation } from "expo-router";
+import { router } from "expo-router";
+import { ValidateTokenRequest } from "@/constants/requestsPayloads";
+import { ResponsePayload } from "@/constants/responsePayloads";
 
 export default function LandingScreen() {
     const [userData, setUserData] = useState<User>()
@@ -29,13 +31,33 @@ export default function LandingScreen() {
     const checkToken = async () => {
         const auxToken: string | null = await AsyncStorage.getItem("token")
         if (!auxToken) {
-            useNavigation("/")
+            await AsyncStorage.removeItem("token")
+            router.replace("/(tabs)")
         }
-        
+        const ENDPOINT: string = "http://localhost:8080/login"
+        const METHOD: string = "PUT"
+        const payload: ValidateTokenRequest = {
+            token: auxToken!
+        }
+        const rawResponse: Response = await fetch(ENDPOINT, {
+            method: METHOD,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        const response: ResponsePayload = await rawResponse.json()
+        console.log(response)
+        if (response.data != true) {
+            await AsyncStorage.removeItem("token")
+            router.replace("/(tabs)")
+        }
     }
 
     useEffect(() => {
         decodeToken()
+        const verifyTokenInterval = setInterval(checkToken, 30000)
+        return () => clearInterval(verifyTokenInterval)
     }, [])
     return (
         <ParallaxScrollView
