@@ -9,6 +9,8 @@ import { User } from "@/models/user.model";
 import { router } from "expo-router";
 import { ValidateTokenRequest } from "@/constants/requestsPayloads";
 import { ResponsePayload } from "@/constants/responsePayloads";
+import { CircleSnail } from 'react-native-progress'
+import { checkToken } from "@/utils/funcs";
 
 export default function LandingScreen() {
     const [userData, setUserData] = useState<User>()
@@ -28,31 +30,7 @@ export default function LandingScreen() {
         }
     }
 
-    const checkToken = async () => {
-        const auxToken: string | null = await AsyncStorage.getItem("token")
-        if (!auxToken) {
-            await AsyncStorage.removeItem("token")
-            router.replace("/(tabs)")
-        }
-        const ENDPOINT: string = "http://localhost:8080/login"
-        const METHOD: string = "PUT"
-        const payload: ValidateTokenRequest = {
-            token: auxToken!
-        }
-        const rawResponse: Response = await fetch(ENDPOINT, {
-            method: METHOD,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        const response: ResponsePayload = await rawResponse.json()
-        console.log(response)
-        if (response.data != true) {
-            await AsyncStorage.removeItem("token")
-            router.replace("/(tabs)")
-        }
-    }
+    
 
     useEffect(() => {
         decodeToken()
@@ -72,6 +50,7 @@ export default function LandingScreen() {
                 !userData ?
                 <ThemedView style={styles.menu}>
                     <ThemedText>Cargando...</ThemedText>
+                    <CircleSnail size={100} indeterminate={true} />
                 </ThemedView>
                 :
                 userData && !error ?
@@ -124,7 +103,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        gap: 4
+        gap: 4,
+        alignItems: 'center',
+        alignContent: 'center',
     },
     gridElement: {
         borderStyle: 'solid',
@@ -134,6 +115,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 13,
-        borderRadius: '15px'
+        borderRadius: '15px',
+        width: 130,
+        textAlign: 'center',
+        alignContent: 'center',
+        
     }
 })

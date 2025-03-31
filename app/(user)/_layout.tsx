@@ -30,6 +30,13 @@ export default function UserLayout() {
                     tabBarIcon: ({color}) => <IconSymbol size={28} name='house.fill' color={color}/>
                 }}
             />
+            <Tabs.Screen
+                name='contract'
+                options={{
+                    title: 'Contrato',
+                    tabBarIcon: ({color}) => <IconSymbol size={28} name='xmark.shield' color={color}/>
+                }}
+            />
         </Tabs>
     )
 }
