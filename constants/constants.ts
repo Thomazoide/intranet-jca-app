@@ -14,7 +14,7 @@ export function liquidationEndpoint(id: number): string {
     return `${API_URL}documentos/${id}/liquidaciones`
 }
 
-const LOGIN_ENDPOINT: string = `${API_URL}login`
+export const LOGIN_ENDPOINT: string = `${API_URL}login`
 
 //Para obtener un usuario o borrarlo
 export function singleUserEndpoint(id: number): string {

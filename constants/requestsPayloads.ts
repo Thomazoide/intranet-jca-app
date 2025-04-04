@@ -15,3 +15,13 @@ export interface AddManyFilesRequest {
 export interface ValidateTokenRequest {
     token: string;
 }
+
+export interface SetLiquidationsPayload {
+    Liquidations: Base64URLString
+    ID: number
+}
+
+export interface AccountRequestPayload {
+    Rut: string
+    Email: string
+}

@@ -2,39 +2,42 @@ import { ThemedView } from "@/components/ThemedView";
 import { contractsEndpoint, decodeToken, getToken } from "@/constants/constants";
 import { User } from "@/models/user.model";
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
 import axios from "axios";
-import "@react-pdf-viewer/core/lib/styles/index.css";
+import { CircleSnail } from "react-native-progress";
+import PDFReader from "react-native-pdf"
 
-let Pdf: any;
-let RNFS: any;
-if (Platform.OS !== "web") {
-    Pdf = require("react-native-pdf").default;
-    RNFS = require("react-native-fs");
-}
 
 export default function ContractView() {
     const [userData, setUserData] = useState<User>()
     const [userToken, setUserToken] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>(null)
-    const [pdfPath, setPdfPath] = useState<string | Blob | null>(null)
     const [contract, setContract] = useState<any>(null)
-    const isNotWeb = Platform.OS !== "web"
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const blobToDataURI = (blob: Blob): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                resolve(reader.result as string)
+            }
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        })
+    }
 
     const getContract = async () => {
         if (userData && userToken) {
             try{
                 const response = await axios.get(contractsEndpoint(userData.ID), {
                     responseType: "arraybuffer",
-                    withCredentials: true,        
+                    headers: {
+                        Authorization: `Bearer ${userToken}`
+                    },
                 })
-                const data = response.data
-                const path = isNotWeb ? `${RNFS.DocumentDirectoryPath}/contrato.pdf` : new Blob([data], { type: 'application/pdf' })
-                isNotWeb && await RNFS.writeFile(path, data, 'base64')
+                const data: string = await blobToDataURI(new Blob([response.data], {type: "application/pdf"}))
                 console.log(data)
-                setPdfPath(isNotWeb ? path : URL.createObjectURL((path) as Blob))
                 setContract(data)
             }catch(err: any){
                 const newError: Error = err
@@ -46,6 +49,7 @@ export default function ContractView() {
 
     useEffect(() => {
         if(!userData && !userToken){
+            setIsLoading(true)
             decodeToken(setUserData, setError)
             getToken().then(token => {
                 setUserToken(token)
@@ -53,15 +57,21 @@ export default function ContractView() {
             ).catch(err => {
                 const newError: Error = err
                 setError(newError)
+                setIsLoading(false)
             })
         }
         if(userData && userToken && !contract){
             getContract()
+            setIsLoading(false)
         }
     }, [userData, userToken])
 
     return (
         <ThemedView style={styles.container}>
+            {
+                isLoading &&
+                <CircleSnail animated size={15} />
+            }
             {
                 error ?
                 <ThemedText>Contrato no encontrado en base de datos</ThemedText>
@@ -69,29 +79,10 @@ export default function ContractView() {
                 contract && userData &&
                 <>
                 <ThemedView style={styles.innerContainer}>
-                    <ThemedText>Contrato de {userData.nombre}</ThemedText>
-                    { isNotWeb ?( 
-                    pdfPath ?
-                    <Pdf 
-                        source={{uri: `file://${pdfPath}`, cache: true}}
-                        style={styles.pdf}
-                        onError={
-                            (error: any) => {
-                                console.log(error)
-                                const newError: Error = new Error("Error al cargar el PDF")
-                                setError(newError)
-                            }
-                        }
+                    <PDFReader
+                    source={{uri: contract}}
+                    style={styles.pdf}
                     />
-                    :
-                    <ThemedText>Cargando...</ThemedText>
-                    )
-                    :
-                    pdfPath &&
-                    <Worker workerUrl={`https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js`}>
-                        <Viewer fileUrl={(pdfPath) as string} />
-                    </Worker>
-                    }
                 </ThemedView>
                 </>
             }
