@@ -2,38 +2,18 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/models/user.model";
-import { router } from "expo-router";
-import { ValidateTokenRequest } from "@/constants/requestsPayloads";
-import { ResponsePayload } from "@/constants/responsePayloads";
 import { CircleSnail } from 'react-native-progress'
 import { checkToken } from "@/utils/funcs";
+import { decodeToken } from "@/constants/constants";
 
 export default function LandingScreen() {
     const [userData, setUserData] = useState<User>()
     const [error, setError] = useState<Error | null>(null)
 
-    const decodeToken = async () => {
-        const storedToken = await AsyncStorage.getItem("token")
-        if (storedToken) {
-            const decodedToken = jwtDecode(storedToken)
-            try{
-                const parsedData: User = JSON.parse(decodedToken.sub!)
-                setUserData(parsedData)
-            }catch(err: any){
-                const newError: Error = err
-                setError(newError)
-            }
-        }
-    }
-
-    
-
     useEffect(() => {
-        decodeToken()
+        decodeToken(setUserData, setError)
         const verifyTokenInterval = setInterval(checkToken, 30000)
         return () => clearInterval(verifyTokenInterval)
     }, [])

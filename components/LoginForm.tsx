@@ -1,4 +1,4 @@
-import { Button, TextInput, StyleSheet } from "react-native";
+import { Button, TextInput, StyleSheet, Platform } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ export default function LoginForm() {
     const [token, setToken] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error>();
+    const isNotWeb = Platform.OS !== "web"
     async function submitForm() {
         const newRut = format(rut, { dots: false })
         // Aquí se debería hacer la petición a la API
@@ -40,6 +41,7 @@ export default function LoginForm() {
                 throw new Error("Error en la petición")
             }
             const data: LoginSuccessResponse = await response.json()
+            if(!isNotWeb) document.cookie = `access_token=${data.token};`
             setToken(data.token)
             setLoading(false)
             AsyncStorage.setItem("token", data.token)

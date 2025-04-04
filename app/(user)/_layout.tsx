@@ -34,7 +34,7 @@ export default function UserLayout() {
                 name='contract'
                 options={{
                     title: 'Contrato',
-                    tabBarIcon: ({color}) => <IconSymbol size={28} name='xmark.shield' color={color}/>
+                    tabBarIcon: ({color}) => <IconSymbol size={28} name='document.circle' color={color}/>
                 }}
             />
         </Tabs>
