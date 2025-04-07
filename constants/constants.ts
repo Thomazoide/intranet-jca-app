@@ -1,10 +1,12 @@
+import { CurrencyResponse } from "@/models/currencyModel"
 import { User } from "@/models/user.model"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios, { AxiosResponse } from "axios"
 import { router } from "expo-router"
 import { jwtDecode } from "jwt-decode"
 import { Dispatch, SetStateAction } from "react"
 
-export const API_URL = "http://localhost:8080/"
+export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
 
 export function contractsEndpoint(id: number): string {
     return `${API_URL}documentos/${id}/contrato`
@@ -36,13 +38,21 @@ export const decodeToken = async ( setUserData: Dispatch<SetStateAction< User | 
     }
 }
 
-export const getToken = async (): Promise<string | null> => {
+export const getToken = async (setToken: Dispatch<SetStateAction<string | null>>): Promise<string | null> => {
     const token = await AsyncStorage.getItem("token")
     if (token) {
         console.log(token)
-        return `access_token=${token};`
+        setToken(token)
+        return token
     }
     return null
 }
 
 const USERS_ENDPOINT: string = `${API_URL}usuarios`
+
+export function GetLoginEndpoint(): string {
+    return `${API_URL}login`
+}
+
+
+

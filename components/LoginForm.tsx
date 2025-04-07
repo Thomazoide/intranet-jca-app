@@ -3,12 +3,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useEffect, useState } from "react";
 import { LoginPayload } from "@/constants/requestsPayloads";
-import { LOGIN_ENDPOINT } from "@/constants/constants";
+import { GetLoginEndpoint, LOGIN_ENDPOINT } from "@/constants/constants";
 import { LoginSuccessResponse } from "@/constants/responsePayloads";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Circle } from "react-native-progress";
 import { router } from "expo-router";
 import { format, validate } from "rut.js"
+import axios from "axios";
 
 export default function LoginForm() {
     const [rut, setRut] = useState<string>("");
@@ -29,22 +30,19 @@ export default function LoginForm() {
             if(!isValid){
                 throw new Error("Rut inválido")
             }
-            const response = await fetch(LOGIN_ENDPOINT, {
-                method: 'POST',
+            const response = await axios.post(GetLoginEndpoint(), payload, {
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
+                    Authorization: `Bearer ${token}`
+                }
             })
-            if (!response.ok) {
-                throw new Error("Error en la petición")
-            }
-            const data: LoginSuccessResponse = await response.json()
+            const data: LoginSuccessResponse = response.data
+            console.log(data)
             setToken(data.token)
             setLoading(false)
-            AsyncStorage.setItem("token", data.token)
+            await AsyncStorage.setItem("token", data.token)
         }catch(err: any){
             let fetchErr: Error = err
+            console.log(fetchErr.message)
             setError(fetchErr)
             setLoading(false)
         }
@@ -60,7 +58,8 @@ export default function LoginForm() {
     useEffect( () => {
         checkToken()
         if(token){
-            router.replace("/(user)/landing")
+            console.log("redirigiendo...")
+            router.push("/(user)/landing")
         }
     }, [token] )
 
