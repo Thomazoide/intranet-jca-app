@@ -30,6 +30,7 @@ export default function LoginForm() {
             if(!isValid){
                 throw new Error("Rut inválido")
             }
+            console.log(GetLoginEndpoint())
             const response = await axios.post(GetLoginEndpoint(), payload, {
                 headers: {
                     Authorization: `Bearer ${token}`

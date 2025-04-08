@@ -1,12 +1,10 @@
-import { CurrencyResponse } from "@/models/currencyModel"
 import { User } from "@/models/user.model"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import axios, { AxiosResponse } from "axios"
 import { router } from "expo-router"
 import { jwtDecode } from "jwt-decode"
 import { Dispatch, SetStateAction } from "react"
 
-export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
+export const API_URL = "https://l9zhdsdq-8080.brs.devtunnels.ms/"
 
 export function contractsEndpoint(id: number): string {
     return `${API_URL}documentos/${id}/contrato`
