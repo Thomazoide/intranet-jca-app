@@ -1,16 +1,27 @@
-import { StyleSheet, TextInput } from "react-native";
+import { ScrollView, StyleSheet, TextInput } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 
 export default function KarinForm() {
+
+    const getActualDate = (): string => {
+        const [year, month, day] = new Date().toISOString().split("T")[0].split("-")
+        return `${day}/${month}/${year}`
+    }
+
     return(
-        <ThemedView>
+        <ScrollView>
             <ThemedView>
                 <ThemedText style={styles.titleFrame}> 
                     ACTA DE DENUNCIA DE ACOSO LABORAL, ACOSO SEXUAL O MALTRATO LABORAL.
                 </ThemedText>
                 <ThemedText style={styles.subTitleFrame} >
                     DATOS DE EL/LA DENUNCIANTE
+                </ThemedText>
+            </ThemedView>
+            <ThemedView>
+                <ThemedText>
+                    Fecha: {getActualDate()}
                 </ThemedText>
             </ThemedView>
             <ThemedView>
@@ -48,7 +59,25 @@ export default function KarinForm() {
                     DATOS DEL DENUNCIADO/A
                 </ThemedText>
             </ThemedView>
-        </ThemedView>
+            <ThemedView>
+                <ThemedText>
+                    Nombres y apellidos:
+                </ThemedText>
+                <TextInput style={styles.inputBox} />
+            </ThemedView>
+            <ThemedView>
+                <ThemedText>
+                    Cargo:
+                </ThemedText>
+                <TextInput style={styles.inputBox} />
+            </ThemedView>
+            <ThemedView>
+                <ThemedText>
+                    Rut:
+                </ThemedText>
+                <TextInput style={styles.inputBox} />
+            </ThemedView>
+        </ScrollView>
     )
 }
 
