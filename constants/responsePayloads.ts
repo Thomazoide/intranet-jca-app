@@ -1,3 +1,5 @@
+import { Holiday } from "@/models/holiday.model";
+
 export interface LoginSuccessResponse {
     statusCode: number;
     message: string;
@@ -9,4 +11,9 @@ export interface ResponsePayload {
     message: string;
     data?: any;
     error?: string; 
+}
+
+export interface HolidaysApiResponse {
+    status: string
+    data: Holiday[]
 }

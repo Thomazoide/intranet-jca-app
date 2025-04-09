@@ -4,55 +4,15 @@ import { ThemedView } from "@/components/ThemedView";
 import { Image, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { User } from "@/models/user.model";
-import { CircleSnail } from 'react-native-progress'
 import { checkToken } from "@/utils/funcs";
 import { decodeToken } from "@/constants/constants";
-import axios, { AxiosResponse } from "axios";
-import { CurrencyResponse } from "@/models/currencyModel";
+import HolidaysTable from "@/components/holidaysTable";
 
 export default function LandingScreen() {
     const [userData, setUserData] = useState<User>()
     const [error, setError] = useState<Error | null>(null)
-    const [dolarString, setDolarString] = useState<string>()
-    const [euroString, setEuroString] = useState<string>()
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-
-    function formatDate(isoDate: string): string {
-        const date = new Date(isoDate)
-        const day = String(date.getDate()).padStart(2, '0')
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const year = date.getFullYear()
-        return `${day}-${month}-${year}`
-    }
-
-    const DOLAR_API = "https://cl.dolarapi.com/v1/cotizaciones/usd"
-    const EURO_API = "https://cl.dolarapi.com/v1/cotizaciones/eur"
-
-    type CurrencyType = "usd" | "eur"
-
-    async function getCurrencyPrice(type: CurrencyType): Promise<void> {
-        setIsLoading(true)
-        let fullStr = ''
-        axios.get(type === "usd" ? DOLAR_API : EURO_API)
-            .then( (res: AxiosResponse<CurrencyResponse, any>) => {
-                console.log(res.data)
-                const crr = res.data
-                fullStr = `${crr.moneda}: ${crr.compra} CLP\nActualizado el: ${formatDate(crr.fechaActualizacion)}`
-                type === "usd" ? setDolarString(fullStr) : setEuroString(fullStr)
-            } )
-            .catch( (err: Error) => {
-                console.log(err)
-                setError(err)
-                fullStr = ''
-            } )
-            .finally( () => {
-                setIsLoading(false)
-            } )
-    }
 
     useEffect(() => {
-        getCurrencyPrice("usd")
-        getCurrencyPrice("eur")
         decodeToken(setUserData, setError)
         const verifyTokenInterval = setInterval(checkToken, 30000)
         return () => clearInterval(verifyTokenInterval)
@@ -67,26 +27,12 @@ export default function LandingScreen() {
                 />
             }>
             {
-                isLoading ?
+                userData && !error ?
                 <ThemedView style={styles.menu}>
-                    <ThemedText>Cargando...</ThemedText>
-                    <CircleSnail size={100} indeterminate={true} />
-                </ThemedView>
-                :
-                userData && dolarString && euroString && !error ?
-                <ThemedView style={styles.menu}>
-                    <ThemedText>Bienvenido/a {userData.nombre}!</ThemedText>
+                    <ThemedText style={styles.landingTitle} >Bienvenido/a {userData.nombre}!</ThemedText>
+                    <ThemedText style={styles.tableTitle} >Feriados del año</ThemedText>
                     <ThemedView style={styles.dashboardGrid}>
-                        <ThemedView style={styles.gridElement}>
-                            <ThemedText>
-                                {dolarString}
-                            </ThemedText>
-                        </ThemedView>
-                        <ThemedView style={styles.gridElement}>
-                            <ThemedText>
-                                {euroString}
-                            </ThemedText>
-                        </ThemedView>
+                        <HolidaysTable/>
                     </ThemedView>
                 </ThemedView>
                 :
@@ -135,5 +81,20 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignContent: 'center',
         
+    },
+    tableTitle: {
+        fontSize: 20,
+        marginTop: 15,
+        marginBottom: 15,
+        fontWeight: "semibold",
+        borderStyle: "dashed",
+        borderBottomWidth: 1
+    },
+    landingTitle: {
+        fontSize: 24,
+        marginTop: 15,
+        marginBottom: 15,
+        fontWeight: "bold",
+        borderBottomWidth: 1
     }
 })
