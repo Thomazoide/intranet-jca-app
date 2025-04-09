@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Button, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown"
 
 
@@ -71,6 +71,9 @@ export default function Liquidations() {
                     labelField="label"
                     valueField="value"
                     placeholder="Mes"
+                    itemTextStyle={{ color: 'blue' }}
+                    selectedTextStyle={{ color: 'blue' }}
+                    placeholderStyle={{ color: 'blue' }}
                     value={value}
                     onChange={
                         item => {
@@ -84,9 +87,12 @@ export default function Liquidations() {
             </ThemedView>
             {
                 value &&
-                <ThemedView>
+                <>
+                <ThemedView style={styles.docVisor}>
 
                 </ThemedView>
+                <Button title='Descargar liquidacion' />
+                </>
             }
         </ThemedView>
     )
@@ -95,6 +101,8 @@ export default function Liquidations() {
 const styles = StyleSheet.create({
     fullBody: {
         display: 'flex',
+        height: '100%',
+        width: '100%',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',

@@ -44,6 +44,13 @@ export default function UserLayout() {
                     tabBarIcon: ({color}) => <IconSymbol size={28} name='house.fill' color={color}/>
                 }}
             />
+            <Tabs.Screen
+                name='leyKarin'
+                options={{
+                    title: 'Ley Karin',
+                    tabBarIcon: ({color}) => <IconSymbol size={28} name='house.fill' color={color}/>
+                }}
+            />
         </Tabs>
     )
 }
