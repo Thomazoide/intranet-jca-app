@@ -35,12 +35,12 @@ export default function RequestAccountForm() {
     }
 
     return(
-        <ThemedView>
+        <ThemedView style={styles.formContainer} >
             <ThemedText>Ingrese su rut</ThemedText>
             <TextInput placeholder="Rut sin puntos, con guión" style={styles.textInput} onChangeText={(text) => setRut(text)}/>
             <ThemedText>Ingrese su email</ThemedText>
             <TextInput placeholder="correo@email.com" style={styles.textInput} onChangeText={(text) => setEmail(text)} />
-            <Button title={loading ? "Cargando..." : "Enviar solicitud"} onPress={sendRequest} disabled={ loading ? true : false } />
+            <Button title={loading ? "Cargando..." : "Enviar solicitud"} onPress={sendRequest} disabled={ loading ? true : false } color={'#132237'} />
             {
                 error && (
                     <ThemedText>
@@ -68,15 +68,18 @@ const styles = StyleSheet.create({
         position: 'absolute'
     },
     textInput: {
+        width: 300,
         padding: 12,
         borderWidth: 2,
         borderColor: 'yellow',
         borderRadius: 16,
         borderStyle: 'solid',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        textAlign: 'center'
     },
     formContainer: {
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        gap: 5
     }
 })

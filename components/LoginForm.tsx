@@ -10,6 +10,8 @@ import { Circle } from "react-native-progress";
 import { router } from "expo-router";
 import { format, validate } from "rut.js"
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { User } from "@/models/user.model";
 
 export default function LoginForm() {
     const [rut, setRut] = useState<string>("");
@@ -17,6 +19,7 @@ export default function LoginForm() {
     const [token, setToken] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error>();
+    const [isSuperUser, setIsSuperUser] = useState<boolean>(false);
     async function submitForm() {
         const newRut = format(rut, { dots: false })
         // Aquí se debería hacer la petición a la API
@@ -36,12 +39,15 @@ export default function LoginForm() {
                 }
             })
             const data: LoginSuccessResponse = response.data
-            console.log(data)
+            const userData: User = JSON.parse(jwtDecode(data.token).sub!)
+            if(userData.super_user){
+                setIsSuperUser(true)
+            }
             setToken(data.token)
             setLoading(false)
             await AsyncStorage.setItem("token", data.token)
-        }catch(err: any){
-            let fetchErr: Error = err
+        }catch{
+            let fetchErr: Error = new Error("Contraseña o rut incorrecto")
             console.log(fetchErr.message)
             setError(fetchErr)
             setLoading(false)
@@ -51,6 +57,10 @@ export default function LoginForm() {
     async function checkToken(){
         const auxToken: string | null = await AsyncStorage.getItem("token")
         if(auxToken){
+            const userData: User = JSON.parse(jwtDecode(auxToken).sub!)
+            if (userData.super_user){
+                setIsSuperUser(true)
+            }
             setToken(auxToken)
         }
     }
@@ -59,7 +69,11 @@ export default function LoginForm() {
         checkToken()
         if(token){
             console.log("redirigiendo...")
-            router.push("/(user)/landing")
+            if(isSuperUser){
+                router.replace("/(superUser)/landing")
+            }else{
+                router.replace("/(user)/landing")
+            }
         }
     }, [token] )
 
@@ -76,6 +90,12 @@ export default function LoginForm() {
       <ThemedView style={styles.inputs} >
         <Circle size={25} indeterminate={true}/>
       </ThemedView>
+      }
+      {
+        error && 
+        <ThemedText>
+            {error.message}
+        </ThemedText>
       }
     </ThemedView>
   );
