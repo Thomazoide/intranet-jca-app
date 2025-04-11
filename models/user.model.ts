@@ -17,3 +17,13 @@ export interface User {
     cargo: CARGOS
     super_user: boolean
 }
+
+export interface UserSchema {
+    nombre: string
+    apellido: string
+    rut: string
+    email: string
+    cargo: CARGOS
+    super_user: boolean
+    password: string
+}

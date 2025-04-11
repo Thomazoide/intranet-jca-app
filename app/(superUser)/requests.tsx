@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { ACCOUNT_REQUEST_ENDPOINT, getToken } from "@/constants/constants";
+import ValidateRequestForm from "@/components/ValidateRequestForm";
+import { ACCOUNT_REQUEST_ENDPOINT, getToken, RequestSelection } from "@/constants/constants";
 import { ResponsePayload } from "@/constants/responsePayloads";
 import { AccountRequest } from "@/models/accountRequest.model";
 import axios, { AxiosRequestConfig } from "axios";
@@ -13,6 +14,10 @@ export default function Requests() {
     const [token, setToken] = useState<string | null>(null)
     const [requests, setRequests] = useState<AccountRequest[]>()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [selectedRequest, setSelectedRequest] = useState<RequestSelection>({
+        ID: 0,
+        showForm: false
+    })
 
     const getRequests = async () => {
         setIsLoading(true)
@@ -32,6 +37,24 @@ export default function Requests() {
             console.log(err)
         }finally{
             setIsLoading(false)
+        }
+    }
+
+    const updateRequest = async () => {
+        try{
+            const CONFIG: AxiosRequestConfig = {
+                headers: {
+                    Authorization: `Bearer ${token?.trim()}`
+                }
+            }
+            const response: ResponsePayload = (await axios.get(ACCOUNT_REQUEST_ENDPOINT, CONFIG)).data
+            if(response.error){
+                throw new Error(response.error)
+            }
+            console.log("updating...")
+            setRequests(response.data)
+        }catch{
+            setRequests(requests)
         }
     }
 
@@ -65,13 +88,14 @@ export default function Requests() {
         }else if(!requests){
             getRequests()
         }
+        if(requests){
+            const interval = setInterval(updateRequest, 15000)
+            return () => clearInterval(interval)
+        }
     }, [token] )
 
     return (
-        <ScrollView contentContainerStyle={{
-            height: '100%',
-            width: '100%',
-        }} >
+        <ScrollView >
             {
                 isLoading &&
                 <ThemedView style={styles.container} >
@@ -97,9 +121,18 @@ export default function Requests() {
                                     !request.validated &&
                                     <ThemedView style={styles.buttonSection} >
                                         <Button title="Ignorar" color="#132237" onPress={ () => ignoreRequest(request)} />
-                                        <Button title="validar" color="#132237"/>
+                                        <Button title="validar" color="#132237" onPress={ () => setSelectedRequest({
+                                            ID: request.ID,
+                                            showForm: true
+                                        }) }/>
                                     </ThemedView>
                                 }
+                                <ThemedView style={styles.formContainer} >
+                                    {
+                                        selectedRequest.ID === request.ID && selectedRequest.showForm &&
+                                        <ValidateRequestForm accessToken={token} request={request} setShowForm={setSelectedRequest} getRequests={getRequests} />
+                                    }
+                                </ThemedView>
                             </ThemedView>
                         ))
                     }
@@ -115,7 +148,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        paddingVertical: 55,
         gap: 10,
         width: '100%',
         height: '100%',
@@ -157,5 +190,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '90%',
         padding: 10,
+    },
+    formContainer: {
+        display: 'flex',
+        
     }
 })

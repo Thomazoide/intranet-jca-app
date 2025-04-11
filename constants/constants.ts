@@ -4,7 +4,12 @@ import { router } from "expo-router"
 import { jwtDecode } from "jwt-decode"
 import { Dispatch, SetStateAction } from "react"
 
-export const API_URL = "https://l9zhdsdq-8080.brs.devtunnels.ms/"
+export interface RequestSelection {
+    ID: number
+    showForm: boolean
+}
+
+export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
 export const HOLIDAYS_API_URL = "https://api.boostr.cl/holidays.json"
 
 export function contractsEndpoint(id: number): string {
@@ -49,7 +54,7 @@ export const getToken = async (setToken: Dispatch<SetStateAction<string | null>>
     return null
 }
 
-const USERS_ENDPOINT: string = `${API_URL}usuarios`
+export const USERS_ENDPOINT: string = `${API_URL}usuarios`
 
 export function GetLoginEndpoint(): string {
     return `${API_URL}login`

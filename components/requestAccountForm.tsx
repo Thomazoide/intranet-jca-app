@@ -22,16 +22,23 @@ export default function RequestAccountForm() {
             return
         }
         setLoading(true)
-        const payload: AccountRequestPayload = {
-            rut: format(rut, {dots: false}),
-            email: email
+        try{
+            const payload: AccountRequestPayload = {
+                rut: format(rut, {dots: false}),
+                email: email
+            }
+            const response: ResponsePayload = (await axios.post(ACCOUNT_REQUEST_ENDPOINT, payload)).data
+            if (response.error) {
+                throw new Error(response.error)
+            }
+            setError(null)
+            setSuccess(true)
+        }catch(err: any){
+            setError(new Error('Error al enviar solicitud'))
+            setSuccess(false)
+        }finally{
+            setLoading(false)
         }
-        const response: ResponsePayload = (await axios.post(ACCOUNT_REQUEST_ENDPOINT, payload)).data
-        if (response.error) {
-            setError(new Error(response.error))
-        }
-        setSuccess(true)
-        setLoading(false)
     }
 
     return(
@@ -43,14 +50,14 @@ export default function RequestAccountForm() {
             <Button title={loading ? "Cargando..." : "Enviar solicitud"} onPress={sendRequest} disabled={ loading ? true : false } color={'#132237'} />
             {
                 error && (
-                    <ThemedText>
+                    <ThemedText style={{color: 'red'}} >
                         {error.message}
                     </ThemedText>
                 )
             }
             {
                 success && (
-                    <ThemedText>
+                    <ThemedText style={{color: 'green'}} >
                         Solicitud enviada con éxito
                     </ThemedText>
                 )
