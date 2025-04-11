@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: "100%",
         width: "100%",
+        padding: 30
     },
     formFrame: {
         display: "flex",
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         borderWidth: 2,
         borderRadius: 10,
-        borderColor: "blue",
+        borderColor: "#132237",
         padding: 10,
     }
 })

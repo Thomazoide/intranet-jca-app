@@ -4,7 +4,7 @@ import { router } from "expo-router"
 import { jwtDecode } from "jwt-decode"
 import { Dispatch, SetStateAction } from "react"
 
-export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
+export const API_URL = "https://l9zhdsdq-8080.brs.devtunnels.ms/"
 export const HOLIDAYS_API_URL = "https://api.boostr.cl/holidays.json"
 
 export function contractsEndpoint(id: number): string {
@@ -16,6 +16,8 @@ export function liquidationEndpoint(id: number): string {
 }
 
 export const LOGIN_ENDPOINT: string = `${API_URL}login`
+
+export const ACCOUNT_REQUEST_ENDPOINT: string = `${API_URL}solicitudes`
 
 //Para obtener un usuario o borrarlo
 export function singleUserEndpoint(id: number): string {

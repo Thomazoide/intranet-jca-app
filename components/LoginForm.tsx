@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useEffect, useState } from "react";
 import { LoginPayload } from "@/constants/requestsPayloads";
-import { GetLoginEndpoint, LOGIN_ENDPOINT } from "@/constants/constants";
+import { LOGIN_ENDPOINT } from "@/constants/constants";
 import { LoginSuccessResponse } from "@/constants/responsePayloads";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Circle } from "react-native-progress";
@@ -30,8 +30,7 @@ export default function LoginForm() {
             if(!isValid){
                 throw new Error("Rut inválido")
             }
-            console.log(GetLoginEndpoint())
-            const response = await axios.post(GetLoginEndpoint(), payload, {
+            const response = await axios.post(LOGIN_ENDPOINT, payload, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
         borderColor: 'yellow',
         borderRadius: 16,
         borderStyle: 'solid',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        width: '80%',
     }
 });

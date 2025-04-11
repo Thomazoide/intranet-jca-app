@@ -5,7 +5,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { ThemedView } from "./ThemedView"
 import { ThemedText } from "./ThemedText"
-import { Button, ScrollView, StyleSheet } from "react-native"
+import { Button, ScrollView, StyleSheet, Text } from "react-native"
 import { CircleSnail } from 'react-native-progress'
 
 
@@ -70,12 +70,12 @@ export default function HolidaysTable(){
                     <ThemedView style={[styles.row, styles.header]}>
                         {
                             tableHead.map( (header, index) => (
-                                <ThemedText key={index+1} style={[
+                                <Text key={index+1} style={[
                                     styles.cell,
                                     styles.headerText
                                 ]}>
                                     {header}
-                                </ThemedText>
+                                </Text>
                             ) )
                         }
                     </ThemedView>
@@ -88,18 +88,18 @@ export default function HolidaysTable(){
                                     index % 2 === 0 ? styles.evenRow : styles.oddRow
                                 ]}
                             >
-                                <ThemedText style={styles.cell}>
+                                <Text style={styles.cell}>
                                     {formatDate(feriado.date)}
-                                </ThemedText>
-                                <ThemedText style={styles.cell}>
+                                </Text>
+                                <Text style={styles.cell}>
                                     {feriado.title}
-                                </ThemedText>
-                                <ThemedText style={styles.cell}>
+                                </Text>
+                                <Text style={styles.cell}>
                                     {feriado.inalienable ? "Si" : "No"}
-                                </ThemedText>
-                                <ThemedText style={styles.cell}>
+                                </Text>
+                                <Text style={styles.cell}>
                                     {feriado.type}
-                                </ThemedText>
+                                </Text>
                             </ThemedView>
                         ) )
                     }

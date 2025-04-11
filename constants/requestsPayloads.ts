@@ -22,6 +22,6 @@ export interface SetLiquidationsPayload {
 }
 
 export interface AccountRequestPayload {
-    Rut: string
-    Email: string
+    rut: string
+    email: string
 }

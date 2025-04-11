@@ -21,7 +21,7 @@ export default function RequestAccount() {
         }
         >
             <ThemedView>
-                <Button title="Volver" onPress={goBack}  />
+                <Button title="Volver" onPress={goBack} color={'#132237'} />
             </ThemedView>
             <ThemedView>
                 <ThemedText>

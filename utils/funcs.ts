@@ -1,3 +1,4 @@
+import { LOGIN_ENDPOINT } from "@/constants/constants"
 import { ValidateTokenRequest } from "@/constants/requestsPayloads"
 import { ResponsePayload } from "@/constants/responsePayloads"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -10,7 +11,7 @@ export const checkToken = async () => {
         await AsyncStorage.removeItem("token")
         router.replace("/(tabs)")
     }
-    const ENDPOINT: string = "http://localhost:8080/login"
+    const ENDPOINT: string = LOGIN_ENDPOINT
     const METHOD: string = "PUT"
     const payload: ValidateTokenRequest = {
         token: auxToken!
@@ -24,7 +25,7 @@ export const checkToken = async () => {
     })
     const response: ResponsePayload = await rawResponse.json()
     console.log(response)
-    if (response.data != true) {
+    if (response.data !== true) {
         await AsyncStorage.removeItem("token")
         router.replace("/(tabs)")
     }
