@@ -153,7 +153,7 @@ export default function ValidateRequestForm(props: Readonly<VRFProps>) {
                     />
                 </ThemedView>
                 <ThemedView style={styles.buttonSection}>
-                    <Button title="Enviar" onPress={createUser} color="#132237" />
+                    <Button title={ isLoading ? "Cargando..." : "Enviar" } onPress={createUser} color="#132237" disabled={ isLoading ? true : false }  />
                     <Button title="Cancelar" onPress={ () => props.setShowForm({
                         ID: props.request.ID,
                         showForm: false

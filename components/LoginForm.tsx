@@ -29,15 +29,8 @@ export default function LoginForm() {
         }
         try{  
             setLoading(true)
-            const isValid = validate(newRut)
-            if(!isValid){
-                throw new Error("Rut inválido")
-            }
-            const response = await axios.post(LOGIN_ENDPOINT, payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            const response = await axios.post(LOGIN_ENDPOINT, payload)
+            console.log(response)
             const data: LoginSuccessResponse = response.data
             const userData: User = JSON.parse(jwtDecode(data.token).sub!)
             if(userData.super_user){

@@ -5,7 +5,7 @@ import { Tabs } from "expo-router";
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Platform } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Document24Filled, Feed24Filled, Form24Filled } from "@fluentui/react-native-icons"
+import { Document24Filled, Feed24Filled, Form24Filled, Person24Filled } from "@fluentui/react-native-icons"
 
 export default function UserLayout() {
     const colorScheme = useColorScheme()
@@ -50,6 +50,13 @@ export default function UserLayout() {
                 options={{
                     title: 'Ley Karin',
                     tabBarIcon: ({color}) => <Form24Filled primaryFill={color} />
+                }}
+            />
+            <Tabs.Screen
+                name='myAccount'
+                options={{
+                    title: "Mi cuenta",
+                    tabBarIcon: ({color}) => <Person24Filled primaryFill={color} />
                 }}
             />
         </Tabs>
