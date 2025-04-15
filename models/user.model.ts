@@ -16,6 +16,8 @@ export interface User {
     email: string
     cargo: CARGOS
     super_user: boolean
+    contrato?: string
+    liquidaciones?: string
 }
 
 export interface UserSchema {

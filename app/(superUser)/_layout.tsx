@@ -5,7 +5,7 @@ import { Tabs } from "expo-router";
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Platform } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { DocumentBriefcase24Filled, DocumentSave24Filled, MailInboxAll24Filled, Person24Filled } from "@fluentui/react-native-icons";
+import { Alert24Filled, DocumentBriefcase24Filled, DocumentSave24Filled, MailInboxAll24Filled, Person24Filled } from "@fluentui/react-native-icons";
 
 export default function UserLayout() {
     const colorScheme = useColorScheme()
@@ -35,7 +35,7 @@ export default function UserLayout() {
                 name="requests"
                 options={{
                     title: 'Solicitudes',
-                    tabBarIcon: ({color}) => <MailInboxAll24Filled primaryFill={color} /> 
+                    tabBarIcon: ({color}) => <Alert24Filled primaryFill={color} /> 
                 }}
             />
             <Tabs.Screen

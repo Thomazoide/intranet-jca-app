@@ -9,6 +9,12 @@ export interface RequestSelection {
     showForm: boolean
 }
 
+export interface Contract {
+    uri: string
+    type: string
+    name: string
+}
+
 export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
 export const HOLIDAYS_API_URL = "https://api.boostr.cl/holidays.json"
 
@@ -52,6 +58,10 @@ export const getToken = async (setToken: Dispatch<SetStateAction<string | null>>
         return token
     }
     return null
+}
+
+export const GetContractUploadEndpoint = (id: number): string => {
+    return `${API_URL}documentos/${id}/contrato`
 }
 
 export const USERS_ENDPOINT: string = `${API_URL}usuarios`

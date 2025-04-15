@@ -58,19 +58,39 @@ export default function Requests() {
         }
     }
 
-    const ignoreRequest = async (request: AccountRequest) => {
+    const completeIgnoreAction = async (request: AccountRequest) => {
         try{
+            
             const response = await axios.put(ACCOUNT_REQUEST_ENDPOINT, request, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
             })
             const data: ResponsePayload = response.data
-            Alert.alert("Solicitud ignorada", data.message)
+            Alert.alert("Acción completada", data.message)
             getRequests()
         }catch{
             Alert.alert("Error", "No se pudo ignorar la solicitud")
         }
+    }
+
+    const ignoreRequest = (request: AccountRequest) => {
+        Alert.alert("¿Ignorar solicitud?", "Una vez ignorada la solicitud, no se podrá validar mas tarde.", [
+            {
+                text: "Cancelar",
+                onPress: () => {
+                    console.log("Acción cancelada...")
+                },
+                style: "cancel"
+            },
+            {
+                text: "Ignorar",
+                onPress: () => {
+                    completeIgnoreAction(request)
+                },
+                style: "destructive"
+            }
+        ])
     }
 
     const obtainToken = async () => {
@@ -194,5 +214,5 @@ const styles = StyleSheet.create({
     formContainer: {
         display: 'flex',
         
-    }
+    },
 })

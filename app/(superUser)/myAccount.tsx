@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { Button } from "react-native";
+import { Button, StyleSheet } from "react-native";
 
 
 export default function MyAccount() {
@@ -12,8 +12,16 @@ export default function MyAccount() {
     }
 
     return (
-        <ThemedView>
+        <ThemedView style={styles.container} >
             <Button title="Cerrar sesión" onPress={onSesionClose} />
         </ThemedView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        display: 'flex',
+        paddingVertical: 30,
+        height: "100%"
+    }
+})
