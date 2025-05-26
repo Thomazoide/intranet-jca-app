@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 290,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+    height: 250,
+    width: 250,
+    top: 0,
+    left: 50,
+    position: 'absolute'
   },
 });

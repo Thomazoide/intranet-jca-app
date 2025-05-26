@@ -7,10 +7,12 @@ import { ArrowCounterclockwise24Filled, ErrorCircle24Color } from "@fluentui/rea
 import axios, { AxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { Button, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Button, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Circle } from "react-native-progress";
 import * as DocumentPicker from 'expo-document-picker';
 import RNFS from 'react-native-blob-util'
+import { AddFileRequest } from "@/constants/requestsPayloads";
+import ShowUserContract from "@/components/ShowUserContract";
 
 export default function Contracts() {
 
@@ -25,19 +27,20 @@ export default function Contracts() {
         showForm: false
     })
     
-    const uploadContract = async (contract: string, ID: number) => {
+    const uploadContract = async (contract: Base64URLString, ID: number, fileName: string) => {
         const CONFIG: AxiosRequestConfig = {
             headers: {
-                "Content-Type": "multipart/form-data",
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             }
         }
         const ENDPOINT: string = GetContractUploadEndpoint(ID)
-        console.log(ENDPOINT)
-        const formData = new FormData()
-        formData.append('file', contract)
+        const body: AddFileRequest = {
+            file: contract,
+            name: fileName
+        }
         try{
-            const response: ResponsePayload = (await axios.post(ENDPOINT, formData, CONFIG)).data
+            const response: ResponsePayload = (await axios.post(ENDPOINT, body, CONFIG)).data
             if(response.error){
                 throw new Error(response.error)
             }
@@ -57,9 +60,9 @@ export default function Contracts() {
             console.log(asset)
             if(asset != null){
                 console.log("punto")
-                const contract: string = RNFS.wrap(asset.uri)
+                const contract: Base64URLString = await RNFS.fs.readFile(asset.uri, 'base64')
                 console.log(contract)
-                await uploadContract(contract, ID)
+                await uploadContract(contract, ID, asset.name)
             }else{
                 throw new Error("Error al subir contrato")
             }
@@ -148,9 +151,21 @@ export default function Contracts() {
                                 <ThemedText >
                                     {
                                         usr.contrato ?
-                                        <ThemedView>
-                                            <Button title="Ver contrato" color="#132237" />
+                                        <ThemedView style={styles.buttonsFrame} >
+                                            <Button title="Ver contrato" color="#132237" onPress={
+                                                () => setSelectedUser({
+                                                    ID: usr.ID,
+                                                    showForm: !selectedUser.showForm
+                                                })
+                                            } />
+                                            
                                             <Button title="Actualizar contrato" color="#132237" onPress={ () => selectPDF(usr.ID)} />
+                                            {
+                                                selectedUser.ID === usr.ID && selectedUser.showForm &&
+                                                <ThemedView>
+                                                    <ShowUserContract ID={usr.ID} token={token!}/>
+                                                </ThemedView>
+                                            }
                                         </ThemedView>
                                         :
                                         <ThemedView>
@@ -206,7 +221,8 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         borderColor: "yellow",
         borderWidth: 2,
-        borderRadius: 15
+        borderRadius: 15,
+        maxHeight: '100%'
     },
     errorCard: {
         display: "flex",
@@ -236,5 +252,12 @@ const styles = StyleSheet.create({
         borderColor:"yellow",
         backgroundColor: "#132237",
         borderRadius: 5
+    },
+    buttonsFrame: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        backgroundColor: 'lightgrey',
+        alignItems: 'center'
     }
 })

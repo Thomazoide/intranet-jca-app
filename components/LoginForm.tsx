@@ -39,7 +39,8 @@ export default function LoginForm() {
             setToken(data.token)
             setLoading(false)
             await AsyncStorage.setItem("token", data.token)
-        }catch{
+        }catch(er){
+            console.log(er)
             let fetchErr: Error = new Error("Contraseña o rut incorrecto")
             console.log(fetchErr.message)
             setError(fetchErr)

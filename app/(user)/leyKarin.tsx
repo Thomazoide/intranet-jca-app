@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: "100%",
         width: "100%",
-        padding: 30
+        padding: 2,
+        paddingVertical: 45
     },
     formFrame: {
         display: "flex",

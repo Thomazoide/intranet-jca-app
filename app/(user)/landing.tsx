@@ -47,10 +47,10 @@ export default function LandingScreen() {
 
 const styles = StyleSheet.create({
     reactLogo: {
-        height: 290,
-        width: 290,
+        height: 250,
+        width: 250,
         bottom: 0,
-        left: 0,
+        left: 50,
         position: 'absolute'
     },
     menu: {
