@@ -2,7 +2,7 @@ import { ACCOUNT_REQUEST_ENDPOINT, RequestSelection, USERS_ENDPOINT } from "@/co
 import { AccountRequestPayload } from "@/constants/requestsPayloads";
 import { ResponsePayload } from "@/constants/responsePayloads";
 import { AccountRequest } from "@/models/accountRequest.model";
-import { CARGOS, UserSchema } from "@/models/user.model";
+import { CARGOS, User } from "@/models/user.model";
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Alert, Button, StyleSheet, TextInput } from "react-native";
@@ -37,12 +37,11 @@ export default function ValidateRequestForm(props: Readonly<VRFProps>) {
             setError(new Error("Se deben llenar todos los campos"))
             return
         }
-        const payload: UserSchema = {
-            nombre: nombre!,
-            apellido: apellido!,
+        const payload: Partial<User> = {
+            fullName: `${nombre} ${apellido}`,
             email: email!,
             rut: rut!,
-            super_user: superUser,
+            isAdmin: superUser,
             cargo: cargo!,
             password: password!
         }
@@ -52,17 +51,17 @@ export default function ValidateRequestForm(props: Readonly<VRFProps>) {
         }
         setIsLoading(true)
         try{
-            const response: ResponsePayload = (await axios.post(USERS_ENDPOINT, payload)).data
+            const response: ResponsePayload<User> = (await axios.post(USERS_ENDPOINT, payload)).data
             if(response.error){
-                throw new Error(response.error)
+                throw new Error(response.message)
             }
-            const changeRequestResponse: ResponsePayload = (await axios.put(ACCOUNT_REQUEST_ENDPOINT, requestSchema, {
+            const changeRequestResponse: ResponsePayload<AccountRequest> = (await axios.put(ACCOUNT_REQUEST_ENDPOINT, requestSchema, {
                 headers: {
                     Authorization: `Bearer ${props.accessToken}`
                 }
             })).data
             if(changeRequestResponse.error){
-                throw new Error(changeRequestResponse.error)
+                throw new Error(changeRequestResponse.message)
             }
             setError(null)
             setSuccess(true)
@@ -155,7 +154,7 @@ export default function ValidateRequestForm(props: Readonly<VRFProps>) {
                 <ThemedView style={styles.buttonSection}>
                     <Button title={ isLoading ? "Cargando..." : "Enviar" } onPress={createUser} color="#132237" disabled={ isLoading ? true : false }  />
                     <Button title="Cancelar" onPress={ () => props.setShowForm({
-                        ID: props.request.ID,
+                        ID: props.request.id,
                         showForm: false
                     }) } color="#132237" />
                 </ThemedView>

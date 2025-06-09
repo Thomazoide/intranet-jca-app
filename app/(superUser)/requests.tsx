@@ -30,9 +30,9 @@ export default function Requests() {
                     'User-Agent': 'Expo'
                 } 
             }
-            const response = await axios.get(ACCOUNT_REQUEST_ENDPOINT, CONFIG)
-            const data: ResponsePayload = response.data
-            setRequests(data.data) 
+            const response = (await axios.get(ACCOUNT_REQUEST_ENDPOINT, CONFIG)).data as ResponsePayload<AccountRequest[]>
+            const data = response.data
+            setRequests(data) 
         }catch(err){
             console.log(err)
         }finally{
@@ -47,9 +47,9 @@ export default function Requests() {
                     Authorization: `Bearer ${token?.trim()}`
                 }
             }
-            const response: ResponsePayload = (await axios.get(ACCOUNT_REQUEST_ENDPOINT, CONFIG)).data
+            const response: ResponsePayload<AccountRequest[]> = (await axios.get(ACCOUNT_REQUEST_ENDPOINT, CONFIG)).data
             if(response.error){
-                throw new Error(response.error)
+                throw new Error(response.message)
             }
             console.log("updating...")
             setRequests(response.data)
@@ -66,7 +66,7 @@ export default function Requests() {
                     Authorization: `Bearer ${token}`,
                 }
             })
-            const data: ResponsePayload = response.data
+            const data: ResponsePayload<AccountRequest> = response.data
             Alert.alert("Acción completada", data.message)
             getRequests()
         }catch{
@@ -127,9 +127,9 @@ export default function Requests() {
                 <ThemedView style={styles.container} >
                     {
                         requests.map((request, index) => (
-                            <ThemedView key={index+1} style={!request.validated ? styles.requestCard : styles.ignoredRequestCard}>
+                            <ThemedView key={index+1} style={!request.ignored || !request.completed ? styles.requestCard : styles.ignoredRequestCard}>
                                 <ThemedText style={styles.title}>
-                                    Solicitud #{request.ID}
+                                    Solicitud #{request.id}
                                 </ThemedText>
                                 <ThemedText>
                                     Rut: {request.rut}
@@ -138,18 +138,18 @@ export default function Requests() {
                                     Email: {request.email}
                                 </ThemedText>
                                 {
-                                    !request.validated &&
+                                    !request.completed || !request.ignored &&
                                     <ThemedView style={styles.buttonSection} >
                                         <Button title="Ignorar" color="#132237" onPress={ () => ignoreRequest(request)} />
                                         <Button title="validar" color="#132237" onPress={ () => setSelectedRequest({
-                                            ID: request.ID,
+                                            ID: request.id,
                                             showForm: true
                                         }) }/>
                                     </ThemedView>
                                 }
                                 <ThemedView style={styles.formContainer} >
                                     {
-                                        selectedRequest.ID === request.ID && selectedRequest.showForm &&
+                                        selectedRequest.ID === request.id && selectedRequest.showForm &&
                                         <ValidateRequestForm accessToken={token} request={request} setShowForm={setSelectedRequest} getRequests={getRequests} />
                                     }
                                 </ThemedView>

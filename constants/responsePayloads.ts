@@ -6,14 +6,17 @@ export interface LoginSuccessResponse {
     token: string;
 }
 
-export interface ResponsePayload {
-    statusCode: number;
+export interface ResponsePayload<T> {
     message: string;
-    data?: any;
-    error?: string; 
+    data?: T;
+    error: boolean; 
 }
 
 export interface HolidaysApiResponse {
     status: string
     data: Holiday[]
+}
+
+export interface base64File {
+    base64: string
 }

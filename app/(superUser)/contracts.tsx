@@ -40,9 +40,9 @@ export default function Contracts() {
             name: fileName
         }
         try{
-            const response: ResponsePayload = (await axios.post(ENDPOINT, body, CONFIG)).data
+            const response: ResponsePayload<undefined> = (await axios.put(ENDPOINT, body, CONFIG)).data
             if(response.error){
-                throw new Error(response.error)
+                throw new Error(response.message)
             }
         }catch(err){
             console.log(err)
@@ -83,11 +83,11 @@ export default function Contracts() {
         const usrData: User = JSON.parse(jwtDecode(token!).sub!)
         setUserData(usrData)
         try{
-            const response: ResponsePayload = await (await axios.get(USERS_ENDPOINT, CONFIG)).data
+            const response: ResponsePayload<User[]> = await (await axios.get(USERS_ENDPOINT, CONFIG)).data
             if(response.error){
-                throw new Error(response.error)
+                throw new Error(response.message)
             }
-            const aux: User[] = response.data
+            const aux = response.data
             setUsers(aux)
         }catch(err){
             setError(err as Error)
@@ -143,10 +143,10 @@ export default function Contracts() {
                             </TouchableOpacity>
                         </ThemedView>
                         :
-                        users.map( (usr, index) => usr.ID !== userData.ID && (
+                        users.map( (usr, index) => usr.id !== userData.id && (
                             <ThemedView key={index+1} style={styles.userCard} >
                                 <ThemedText style={styles.title} >
-                                    #{usr.ID} - {usr.nombre} {usr.apellido}
+                                    #{usr.id} - {usr.fullName}
                                 </ThemedText>
                                 <ThemedText >
                                     {
@@ -154,16 +154,16 @@ export default function Contracts() {
                                         <ThemedView style={styles.buttonsFrame} >
                                             <Button title="Ver contrato" color="#132237" onPress={
                                                 () => setSelectedUser({
-                                                    ID: usr.ID,
+                                                    ID: usr.id,
                                                     showForm: !selectedUser.showForm
                                                 })
                                             } />
                                             
-                                            <Button title="Actualizar contrato" color="#132237" onPress={ () => selectPDF(usr.ID)} />
+                                            <Button title="Actualizar contrato" color="#132237" onPress={ () => selectPDF(usr.id)} />
                                             {
-                                                selectedUser.ID === usr.ID && selectedUser.showForm &&
+                                                selectedUser.ID === usr.id && selectedUser.showForm &&
                                                 <ThemedView>
-                                                    <ShowUserContract ID={usr.ID} token={token!}/>
+                                                    <ShowUserContract id={usr.id} token={token!}/>
                                                 </ThemedView>
                                             }
                                         </ThemedView>
@@ -175,7 +175,7 @@ export default function Contracts() {
                                             }} >
                                                 Usuario sin contrato
                                             </ThemedText>
-                                            <Button title="Actualizar contrato" color="#132237" onPress={ () => selectPDF(usr.ID)} />
+                                            <Button title="Actualizar contrato" color="#132237" onPress={ () => selectPDF(usr.id)} />
                                         </ThemedView>
                                     }
                                 </ThemedText>

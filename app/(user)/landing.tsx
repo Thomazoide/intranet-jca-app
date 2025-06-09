@@ -14,8 +14,6 @@ export default function LandingScreen() {
 
     useEffect(() => {
         decodeToken(setUserData, setError)
-        const verifyTokenInterval = setInterval(checkToken, 30000)
-        return () => clearInterval(verifyTokenInterval)
     }, [])
     return (
         <ParallaxScrollView
@@ -29,7 +27,7 @@ export default function LandingScreen() {
             {
                 userData && !error ?
                 <ThemedView style={styles.menu}>
-                    <ThemedText style={styles.landingTitle} >Bienvenido/a {userData.nombre}!</ThemedText>
+                    <ThemedText style={styles.landingTitle} >Bienvenido/a {userData.fullName.split(" ")[0]}!</ThemedText>
                     <ThemedText style={styles.tableTitle} >Feriados del año</ThemedText>
                     <ThemedView style={styles.dashboardGrid}>
                         <HolidaysTable/>

@@ -15,18 +15,18 @@ export interface Contract {
     name: string
 }
 
-export const API_URL = "https://19x7zxdf-8080.brs.devtunnels.ms/"
+export const API_URL = "https://jtfb87sn-3000.brs.devtunnels.ms/"
 export const HOLIDAYS_API_URL = "https://api.boostr.cl/holidays.json"
 
 export function contractsEndpoint(id: number): string {
-    return `${API_URL}documentos/${id}/contrato`
+    return `${API_URL}usuarios/${id}/contrato/base64`
 }
 
 export function liquidationEndpoint(id: number): string {
     return `${API_URL}documentos/${id}/liquidaciones`
 }
 
-export const LOGIN_ENDPOINT: string = `${API_URL}login`
+export const LOGIN_ENDPOINT: string = `${API_URL}usuarios/login`
 
 export const ACCOUNT_REQUEST_ENDPOINT: string = `${API_URL}solicitudes`
 

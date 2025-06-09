@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import * as FileSystem from 'expo-file-system'
 import axios, { AxiosRequestConfig } from "axios"
 import { contractsEndpoint } from "@/constants/constants"
 import { Button, StyleSheet } from "react-native"
@@ -7,11 +6,12 @@ import { ThemedView } from "./ThemedView"
 import { ThemedText } from "./ThemedText"
 import PDFReader from 'react-native-pdf'
 import { Circle } from "react-native-progress"
+import { base64File, ResponsePayload } from "@/constants/responsePayloads"
 
 
 interface SUCProps {
     token: string
-    ID: number
+    id: number
 }
 
 export default function ShowUserContract(props: Readonly<SUCProps>){
@@ -19,26 +19,8 @@ export default function ShowUserContract(props: Readonly<SUCProps>){
     const [error, setError] = useState<Error | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const arrayBufferToBase64 = (buffer: ArrayBuffer): Base64URLString => {
-        let binary = ''
-        const bytes = new Uint8Array(buffer)
-        const len = bytes.length
-        for(let x = 0; x < len; x++) {
-            binary += String.fromCharCode(bytes[x])
-        }
-        return btoa(binary)
-    }
-
-    const savePDFToFile = async (base64: Base64URLString): Promise<string> => {
-        const fileURI = `${FileSystem.documentDirectory}contract.pdf`
-        await FileSystem.writeAsStringAsync(fileURI, base64, {
-            encoding: FileSystem.EncodingType.Base64
-        })
-        return fileURI
-    }
-
     const getContract = async () => {
-        const ENDPOINT: string = contractsEndpoint(props.ID)
+        const ENDPOINT: string = contractsEndpoint(props.id)
         const CONFIG: AxiosRequestConfig = {
             responseType: "arraybuffer",
             headers: {
@@ -46,14 +28,14 @@ export default function ShowUserContract(props: Readonly<SUCProps>){
             }
         }
         setIsLoading(true)
+        setError(null)
+        setContract(null)
         try{
-            const buffer: ArrayBuffer = (await axios.get(ENDPOINT, CONFIG)).data
-            const base64Data: Base64URLString = arrayBufferToBase64(buffer)
-            const dataURI = await savePDFToFile(base64Data)
-            setError(null)
-            setContract(dataURI)
+            const response = (await axios.get(ENDPOINT, CONFIG)).data as ResponsePayload<base64File>
+            if (response.error) throw new Error(response.message);
+            const pdfURI = `data:application/pdf;base64,${response.data?.base64}`
+            setContract(pdfURI)
         }catch(err){
-            console.log(err)
             setError(err as Error)
         }finally{
             setIsLoading(false)

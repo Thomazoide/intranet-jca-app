@@ -1,7 +1,8 @@
-import { LOGIN_ENDPOINT } from "@/constants/constants"
+import { API_URL } from "@/constants/constants"
 import { ValidateTokenRequest } from "@/constants/requestsPayloads"
 import { ResponsePayload } from "@/constants/responsePayloads"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios from "axios"
 import { router } from "expo-router"
 
 
@@ -11,19 +12,11 @@ export const checkToken = async () => {
         await AsyncStorage.removeItem("token")
         router.replace("/(tabs)")
     }
-    const ENDPOINT: string = LOGIN_ENDPOINT
-    const METHOD: string = "PUT"
+    const ENDPOINT: string = `${API_URL}usuarios/check-token`
     const payload: ValidateTokenRequest = {
         token: auxToken!
     }
-    const rawResponse: Response = await fetch(ENDPOINT, {
-        method: METHOD,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    })
-    const response: ResponsePayload = await rawResponse.json()
+    const response = (await axios.post(ENDPOINT, payload)).data as ResponsePayload<boolean>
     console.log(response)
     if (response.data !== true) {
         await AsyncStorage.removeItem("token")

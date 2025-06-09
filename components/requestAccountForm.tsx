@@ -7,6 +7,7 @@ import { format } from "rut.js";
 import axios from "axios";
 import { ACCOUNT_REQUEST_ENDPOINT } from "@/constants/constants";
 import { ResponsePayload } from "@/constants/responsePayloads";
+import { AccountRequest } from "@/models/accountRequest.model";
 
 
 export default function RequestAccountForm() {
@@ -27,14 +28,14 @@ export default function RequestAccountForm() {
                 rut: format(rut, {dots: false}),
                 email: email
             }
-            const response: ResponsePayload = (await axios.post(ACCOUNT_REQUEST_ENDPOINT, payload)).data
+            const response: ResponsePayload<AccountRequest> = (await axios.post(ACCOUNT_REQUEST_ENDPOINT, payload)).data
             if (response.error) {
-                throw new Error(response.error)
+                throw new Error(response.message)
             }
             setError(null)
             setSuccess(true)
-        }catch(err: any){
-            setError(new Error('Error al enviar solicitud'))
+        }catch(err){
+            setError(err as Error)
             setSuccess(false)
         }finally{
             setLoading(false)

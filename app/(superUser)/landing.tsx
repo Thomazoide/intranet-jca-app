@@ -29,7 +29,7 @@ export default function LandingScreen() {
             {
                 userData && !error ?
                 <ThemedView style={styles.menu}>
-                    <ThemedText style={styles.landingTitle} >Bienvenido/a {userData.nombre}!</ThemedText>
+                    <ThemedText style={styles.landingTitle} >Bienvenido/a {userData.fullName}!</ThemedText>
                     <ThemedText style={styles.tableTitle} >Feriados del año</ThemedText>
                     <ThemedView style={styles.dashboardGrid}>
                         <HolidaysTable/>

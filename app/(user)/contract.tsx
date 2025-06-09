@@ -42,7 +42,7 @@ export default function ContractView() {
             setIsLoading(true)
             console.log(userToken)
             try{
-                const response = await axios.get(contractsEndpoint(userData.ID), {
+                const response = await axios.get(contractsEndpoint(userData.id), {
                     responseType: "arraybuffer",
                     headers: {
                         Authorization: `Bearer ${userToken}`
@@ -85,7 +85,7 @@ export default function ContractView() {
                 !isLoading && contract && userData ?
                 <ThemedView style={styles.innerContainer}>
                     <ThemedText>
-                        Contrato {`${userData.nombre} ${userData.apellido}`}
+                        Contrato {`${userData.fullName}`}
                     </ThemedText>
                     <ThemedView>
                         <PDFReader

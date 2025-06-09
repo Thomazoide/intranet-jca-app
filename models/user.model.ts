@@ -6,26 +6,12 @@ export enum CARGOS {
 }
 
 export interface User {
-    ID: number
-    created_at: Date
-    updated_at: Date
-    deleted_at: Date
-    nombre: string
-    apellido: string
+    id: number
+    fullName: string
     rut: string
     email: string
     cargo: CARGOS
-    super_user: boolean
+    isAdmin: boolean
     contrato?: string
-    liquidaciones?: string
-}
-
-export interface UserSchema {
-    nombre: string
-    apellido: string
-    rut: string
-    email: string
-    cargo: CARGOS
-    super_user: boolean
-    password: string
+    password?: string
 }
