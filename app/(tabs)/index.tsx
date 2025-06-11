@@ -3,11 +3,31 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 import LoginForm from '@/components/LoginForm';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { CHECK_TOKEN_URL } from '@/constants/constants';
+import { ResponsePayload } from '@/constants/responsePayloads';
 
 export default function HomeScreen() {
   const goToRequest = () => {
     router.push("/(tabs)/requestAccount")
   }
+
+  const checkUserData = async () => {
+    const userToken = await AsyncStorage.getItem("token")
+    if(userToken){
+      const response = (await axios.post(CHECK_TOKEN_URL, {token: userToken})).data as ResponsePayload<boolean>
+      if(response.data){
+        router.push("/(user)/landing")
+      }
+    }
+  }
+
+  useEffect( () => {
+    checkUserData()
+  }, [] )
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#E9E9E7', dark: '#1D3D47' }}

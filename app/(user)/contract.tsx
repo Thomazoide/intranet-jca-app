@@ -1,13 +1,13 @@
 import { ThemedView } from "@/components/ThemedView";
-import { contractsEndpoint, decodeToken, getToken } from "@/constants/constants";
+import { Base64ContractURL, decodeToken, GetRequestConfig, getToken, JCA_BLUE, JCA_YELLOW } from "@/constants/constants";
 import { User } from "@/models/user.model";
 import { useEffect, useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, Text } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import axios from "axios";
 import { Circle } from "react-native-progress";
-import * as FileSystem from "expo-file-system"
 import PDFReader from "react-native-pdf"
+import { ResponsePayload } from "@/constants/responsePayloads";
 
 
 export default function ContractView() {
@@ -19,40 +19,16 @@ export default function ContractView() {
     const [cantidadPaginas, setCantidadPaginas] = useState<number>()
     const [paginaActual, setPaginaActual] = useState<number>()
 
-    const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-        let binary: string = ''
-        const bytes = new Uint8Array(buffer)
-        const len = bytes.length
-        for(let x = 0; x < len; x++) {
-            binary += String.fromCharCode(bytes[x])
-        }
-        return btoa(binary)
-    }
-
-    const savePDFToFile = async (base64: string): Promise<string> => {
-        const fileURI = `${FileSystem.documentDirectory}contract.pdf`
-        await FileSystem.writeAsStringAsync(fileURI, base64, {
-            encoding: FileSystem.EncodingType.Base64
-        })
-        return fileURI
-    }
-
     const getContract = async () => {
         if (userData && userToken) {
             setIsLoading(true)
             console.log(userToken)
             try{
-                const response = await axios.get(contractsEndpoint(userData.id), {
-                    responseType: "arraybuffer",
-                    headers: {
-                        Authorization: `Bearer ${userToken}`
-                    },
-                })
-                const base64Data: string = arrayBufferToBase64(response.data)
-                const dataURI = await savePDFToFile(base64Data)
-                console.log(dataURI)
+                const response = (await axios.get(await Base64ContractURL(userData.id), GetRequestConfig(userToken))).data as ResponsePayload<{base64: string}>
+                const base64Data = response.data?.base64
+                console.log(base64Data)
                 setError(null)
-                setContract(dataURI)
+                setContract(`data:application/pdf;base64,${base64Data}`)
             }catch(err: any){
                 const newError: Error = err
                 console.log(newError.message)
@@ -84,10 +60,9 @@ export default function ContractView() {
                 :
                 !isLoading && contract && userData ?
                 <ThemedView style={styles.innerContainer}>
-                    <ThemedText>
+                    <ThemedText style={styles.text}>
                         Contrato {`${userData.fullName}`}
                     </ThemedText>
-                    <ThemedView>
                         <PDFReader
                         source={{uri: contract}}
                         style={styles.pdf}
@@ -100,8 +75,7 @@ export default function ContractView() {
                             setPaginaActual(actualPage)
                         } }
                         />
-                    </ThemedView>
-                    <Button color={"#132237"} title="Descargar"/>
+                    <Button color={JCA_YELLOW} title="Descargar"/>
                     {
                         paginaActual && cantidadPaginas &&
                         <ThemedText>
@@ -126,7 +100,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: "100%",
         width: "100%",
-        overflowY: "scroll"
+        overflowY: "scroll",
+        backgroundColor: JCA_BLUE,
     },
     innerContainer: {
         display: "flex",
@@ -134,7 +109,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 10,
-        gap: 5
+        gap: 5,
+        backgroundColor: JCA_BLUE
     },
     pdf: {
         display:"flex",
@@ -143,7 +119,10 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         borderWidth: 5,
         borderRadius: 35,
-        borderColor: "yellow"
+        borderColor: JCA_YELLOW
         
+    },
+    text: {
+        color: "white"
     }
 })

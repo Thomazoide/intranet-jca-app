@@ -1,113 +1,77 @@
+import DocumentResumer from "@/components/documentResumer";
+import LiqRequester from "@/components/liqRequester";
+import LiqVisor from "@/components/liqVisor";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { GetRequestConfig, JCA_YELLOW, liquidationEndpoint } from "@/constants/constants";
+import { ResponsePayload } from "@/constants/responsePayloads";
+import { Liquidation } from "@/models/liquidation.model";
+import { User } from "@/models/user.model";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
+import { Button, ScrollView, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown"
 
 
 export default function Liquidations() {
-    const [value, setValue] = useState<string | null>(null)
-    const [isFocus, setIsFocus] = useState<boolean>(false)
-    const liquidations = [
-        {
-            label: "Enero",
-            value: "1"
-        },
-        {
-            label: "Febrero",
-            value: "2"
-        },
-        {
-            label: "Marzo",
-            value: "3"
-        },
-        {
-            label: "Abril",
-            value: "4"
-        },
-        {
-            label: "Mayo",
-            value: "5"
-        },
-        {
-            label: "Junio",
-            value: "6"
-        },
-        {
-            label: "Julio",
-            value: "7"
-        },
-        {
-            label: "Agosto",
-            value: "8"
-        },
-        {
-            label: "Septiembre",
-            value: "9"
-        },
-        {
-            label: "Octubre",
-            value: "10"
-        },
-        {
-            label: "Noviembre",
-            value: "11"
-        },
-        {
-            label: "Diciembre",
-            value: "12"
-        }
-    ]
+    const [liquidations, setLiquidations] = useState<Array<Liquidation>>()
+    const [selectedLiquidation, setSelectedLiquidation] = useState<Liquidation | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
+    const [token, setToken] = useState<string>()
+    const [userData, setUserData] = useState<User>()
 
-    
+    const getContracts = async () => {
+        setIsLoading(true)
+        const token = await AsyncStorage.getItem("token")
+        if(token){
+            const usrData = jwtDecode<User>(token)
+            setToken(token)
+            setUserData(usrData)
+            const response = (await axios.get(liquidationEndpoint(usrData.id), GetRequestConfig(token))).data as ResponsePayload<Array<Liquidation>>
+            if(response.error){
+                setError(response.message)
+                setIsLoading(false)
+                return
+            }
+            if(response.data){
+                setLiquidations(response.data)
+                setError(null)
+                setIsLoading(false)
+                return
+            }
+        }
+    }
+
+    useEffect( () => {
+        if(!liquidations) getContracts()
+    }, [] )
 
     return(
-        <ThemedView style={styles.fullBody} >
+        <ScrollView style={styles.fullBody} >
             <ThemedText>Liquidaciones</ThemedText>
-            <ThemedView>
-                <ThemedText>Seleccionar mes</ThemedText>
-                <Dropdown
-                    data={liquidations}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Mes"
-                    itemTextStyle={{ color: 'blue' }}
-                    selectedTextStyle={{ color: 'blue' }}
-                    placeholderStyle={{ color: 'blue' }}
-                    value={value}
-                    onChange={
-                        item => {
-                            setValue(item.value)
-                            setIsFocus(false)
-                        }
-                    }
-                    onFocus={ () => setIsFocus(true) }
-                    onBlur={ () => setIsFocus(false) }
-                />
-            </ThemedView>
             {
-                value &&
-                <>
-                <ThemedView style={styles.docVisor}>
-
-                </ThemedView>
-                <Button title='Descargar liquidacion' />
-                </>
+                liquidations && !selectedLiquidation &&
+                <DocumentResumer liquidaciones={liquidations} setSelectedLiquidation={setSelectedLiquidation} token={token!} />
             }
-        </ThemedView>
+            {
+                selectedLiquidation &&
+                <LiqVisor liq={selectedLiquidation} setLiq={setSelectedLiquidation} token={token!} userID={userData!.id} />
+            }
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     fullBody: {
-        display: 'flex',
         height: '100%',
         width: '100%',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
         gap: 12,
-        paddingTop: 35,
+        paddingTop: 45,
+        paddingHorizontal: 5,
+        paddingBottom: 25
     },
     docVisor: {
         display:"flex",
@@ -116,6 +80,7 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         borderWidth: 5,
         borderRadius: 35,
-        borderColor: "yellow"
-    }
+        borderColor: JCA_YELLOW
+    },
+    
 })
