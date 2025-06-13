@@ -26,13 +26,10 @@ export default function ContractView() {
             try{
                 const response = (await axios.get(await Base64ContractURL(userData.id), GetRequestConfig(userToken))).data as ResponsePayload<{base64: string}>
                 const base64Data = response.data?.base64
-                console.log(base64Data)
                 setError(null)
                 setContract(`data:application/pdf;base64,${base64Data}`)
             }catch(err: any){
-                const newError: Error = err
-                console.log(newError.message)
-                setError(newError)
+                setError(err as Error)
             }finally{
                 setIsLoading(false)
             }

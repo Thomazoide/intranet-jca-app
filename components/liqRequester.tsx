@@ -8,6 +8,9 @@ import { jwtDecode } from "jwt-decode";
 import { User } from "@/models/user.model";
 import axios from "axios";
 import { ResponsePayload } from "@/constants/responsePayloads";
+import { LiqRequest } from "@/models/liqRequest.model";
+import ErrorOrSuccessMessage from "./ErrorOrSuccessMessage";
+import { Circle } from "react-native-progress";
 
 const LISTA_LIQ_MAX: Array<{label: string, value: number}> = [
     {
@@ -67,12 +70,31 @@ const LISTA_LIQ_MAX: Array<{label: string, value: number}> = [
 export default function LiqRequester(props: Readonly<{token: string}>) {
 
     const [selectedQ, setSelectedQ] = useState<number>(0)
+    const [error, setError] = useState<Error | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isSuccess, setIsSuccess] = useState<boolean>(false)
 
     const sendLiqRequest = async () => {
+        setIsLoading(true)
         const config = GetRequestConfig(props.token)
-        const url = SolicitarLiquidacionesURL(jwtDecode<User>(props.token).id)
-        //CREAR MODELO PARA LA SOLICITUD DE LIQUIDACIONES
-        const response = (await axios.put(url, config)).data as ResponsePayload<undefined>
+        const userID = jwtDecode<User>(props.token).id
+        const url = SolicitarLiquidacionesURL(userID)
+        const payload: Partial<LiqRequest> = {
+            message: LISTA_LIQ_MAX[selectedQ].label,
+            userID,
+            completada: false
+        }
+        const response = (await axios.put(url, payload, config)).data as ResponsePayload<LiqRequest>
+        console.log(response)
+        if(response.error){
+            setError(new Error(response.message))
+            setIsSuccess(false)
+            setIsLoading(false)
+            return
+        }
+        setIsSuccess(true)
+        setError(null)
+        setIsLoading(false)
     }
 
     return(
@@ -91,10 +113,25 @@ export default function LiqRequester(props: Readonly<{token: string}>) {
                 }
             }
             style={styles.dropdownStyle}
+            selectedTextStyle={{
+                color: "white"
+            }}
             />
             {
                 selectedQ !== 0 &&
-                <Button color={JCA_BLUE} title="Solicitar"/>
+                <Button color={JCA_BLUE} title="Solicitar" onPress={sendLiqRequest} disabled={isLoading} />
+            }
+            {
+                isLoading &&
+                <Circle indeterminate size={15} color={JCA_BLUE}/>
+            }
+            {
+                error &&
+                <ErrorOrSuccessMessage message={error.message} isError={true}/>
+            }
+            {
+                isSuccess && error === null &&
+                <ErrorOrSuccessMessage message="Solicitud creada" isError={false}/>
             }
         </ThemedView>
     )

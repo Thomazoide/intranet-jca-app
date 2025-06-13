@@ -2,8 +2,46 @@ import { Dimensions, ScrollView, StyleSheet, Switch, TextInput } from "react-nat
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useState } from "react";
+import { JCA_BLUE, JCA_YELLOW } from "@/constants/constants";
+import { Dropdown } from "react-native-element-dropdown";
+import { LineHorizontal124Regular } from "@fluentui/react-native-icons";
+
+interface WitnessData {
+    nombre: string
+    cargo: string
+    //Unidad/Area/Servicio
+    uas: string
+}
+
+const cant_testigos = [
+    {
+        label: "Sin testigos",
+        value: 0
+    },
+    {
+        label: "1 testigo",
+        value: 1
+    },
+    {
+        label: "2 testigos",
+        value: 2
+    },
+    {
+        label: "3 testigos",
+        value: 3
+    },
+    {
+        label: "4 testigos",
+        value: 4
+    },
+    {
+        label: "5 testigos",
+        value: 5
+    }
+]
 
 export default function KarinForm() {
+    
     const [userIsVictim, setUserIsVictim] = useState<boolean>(false)
     const [isAcosoLaboral, setIsAcosoLaboral] = useState<boolean>(false)
     const [isAcosoSexual, setIsAcosoSexual] = useState<boolean>(false)
@@ -22,6 +60,32 @@ export default function KarinForm() {
     const [SCOAIS, setSCOAIS] = useState<boolean>(false)
     //Situacion Denunciada Previamente en otra Instancia Similar
     const [SDPIS, setSDPIS] = useState<boolean>(false)
+    const [cantidadDeTestigos, setCantidadDeTestigos] = useState<number>(0)
+
+    //Datos del/la denunciante
+    const [fullName, setFullName] = useState<string>()
+    const [rut, setRut] = useState<string>()
+    const [medioContanto, setMedioContacto] = useState<string>()
+    const [cargo, setCargo] = useState<string>()
+    //Unidad/servicio/cargo
+    const [usa, setUsa] = useState<string>()
+
+    //Datos del/la denunciado/a
+    const [dFullName, setDFullName] = useState<string>()
+    const [dRut, setDRut] = useState<string>()
+    const [dCargo, setDCargo] = useState<string>()
+    const [dUsa, setDUsa] = useState<string>()
+
+    //Datos de la victima (En caso de que el denunciante no lo sea)
+    const [vFullName, setVFullName] = useState<string>()
+    const [vRut, setVRut] = useState<string>()
+    const [vCargo, setVCargo] = useState<string>()
+    const [vUsa, setVUsa] = useState<string>()
+
+    //Testigos
+    
+
+
 
     const getActualDate = (): string => {
         const [year, month, day] = new Date().toISOString().split("T")[0].split("-")
@@ -48,31 +112,31 @@ export default function KarinForm() {
                     <ThemedText>
                         Nombres y apellidos:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setFullName} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Rut:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setRut} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Medio de contacto:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setMedioContacto} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Cargo:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setCargo}/>
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Unidad/Servicio/Area:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setUsa} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText style={ styles.subTitleFrame } >
@@ -83,25 +147,25 @@ export default function KarinForm() {
                     <ThemedText>
                         Nombres y apellidos:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setDFullName} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Cargo:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setDCargo} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Rut:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setDRut} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Unidad/Servicio/Area:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setDUsa} />
                 </ThemedView>
                 <ThemedView style={styles.switchFrame}>
                     <ThemedText>
@@ -111,12 +175,12 @@ export default function KarinForm() {
                         value={userIsVictim} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE
                             }}
                         onValueChange={ () => setUserIsVictim(!userIsVictim) }
                         thumbColor={
                             userIsVictim ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -132,25 +196,25 @@ export default function KarinForm() {
                     <ThemedText>
                         Nombres y apellidos:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setVFullName} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Cargo:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setVCargo}/>
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Rut:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setVRut} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText>
                         Unidad/Servicio/Area:
                     </ThemedText>
-                    <TextInput style={styles.inputBox} />
+                    <TextInput style={styles.inputBox} onChangeText={setVUsa} />
                 </ThemedView>
                 <ThemedView>
                     <ThemedText style={styles.subTitleFrame} >
@@ -165,12 +229,12 @@ export default function KarinForm() {
                         value={isAcosoLaboral} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setIsAcosoLaboral(!isAcosoLaboral) }
                         thumbColor={
                             isAcosoLaboral ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -185,12 +249,12 @@ export default function KarinForm() {
                         value={isAcosoSexual} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setIsAcosoSexual(!isAcosoSexual) }
                         thumbColor={
                             isAcosoSexual ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -205,12 +269,12 @@ export default function KarinForm() {
                         value={isMaltratoLaboral} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setIsMaltratoLaboral(!isMaltratoLaboral) }
                         thumbColor={
                             isMaltratoLaboral ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -225,12 +289,12 @@ export default function KarinForm() {
                         value={isAnotherType} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setIsAnotherType(!isAnotherType) }
                         thumbColor={
                             isAnotherType ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -252,12 +316,12 @@ export default function KarinForm() {
                         value={RAVDD} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setRAVDD(!RAVDD) }
                         thumbColor={
                             RAVDD ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -274,12 +338,12 @@ export default function KarinForm() {
                         value={RADDV} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setRADDV(!RADDV) }
                         thumbColor={
                             RADDV ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -296,12 +360,12 @@ export default function KarinForm() {
                         value={RSDVNDU} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setRSDVNDU(!RSDVNDU) }
                         thumbColor={
                             RSDVNDU ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -318,12 +382,12 @@ export default function KarinForm() {
                         value={RSDVNDNU} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setRSDVNDNU(!RSDVNDNU) }
                         thumbColor={
                             RSDVNDNU ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -345,12 +409,12 @@ export default function KarinForm() {
                         value={existeEvidencia} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE
                             }}
                         onValueChange={ () => setExisteEvidencia(!existeEvidencia) }
                         thumbColor={
                             existeEvidencia ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -367,12 +431,12 @@ export default function KarinForm() {
                         value={SCOAIS} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setSCOAIS(!SCOAIS) }
                         thumbColor={
                             SCOAIS ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
@@ -389,17 +453,74 @@ export default function KarinForm() {
                         value={SDPIS} 
                         trackColor={{
                             false: 'gray',
-                            true: '#132237' 
+                            true: JCA_BLUE 
                             }}
                         onValueChange={ () => setSDPIS(!SDPIS) }
                         thumbColor={
                             SDPIS ?
-                            '#132237'
+                            JCA_YELLOW
                             :
                             'white'
                         }
                         ios_backgroundColor={"gray"}
                     />
+                </ThemedView>
+                <ThemedView>
+                    <ThemedText style={{
+                        maxWidth: "75%"
+                    }} >
+                        En caso de haber testigos, enumerarlos y completar sus datos
+                    </ThemedText>
+                    <Dropdown
+                    data={cant_testigos}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Definir cantidad"
+                    value={cantidadDeTestigos}
+                    onChange={
+                        (item: {label: string, value: number}) => {
+                            setCantidadDeTestigos(item.value)
+                        }
+                    }
+                    style={styles.dropDownStyle}
+                    selectedTextStyle={{
+                        color:"white"
+                    }}
+                    />
+                    {
+                        cantidadDeTestigos !== 0 &&
+                        Array.from({length: cantidadDeTestigos}, (_, i) => i).map( (item) => (
+                            <ThemedView key={item.toString()} style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center"
+                            }} >
+                                <LineHorizontal124Regular/>
+                                <ThemedText style={{
+                                    fontSize: 21,
+                                    textAlign: "center"
+                                }} > Testigo {item+1} </ThemedText>
+                                <ThemedView>
+                                    <ThemedText>Nombre y apellido</ThemedText>
+                                    <TextInput style={styles.inputBox}/>
+                                </ThemedView>
+                                <ThemedView>
+                                    <ThemedText>Cargo</ThemedText>
+                                    <TextInput style={styles.inputBox}/>
+                                </ThemedView>
+                                <ThemedView>
+                                    <ThemedText>Unidad/Servicio/Area</ThemedText>
+                                    <TextInput style={styles.inputBox}  />
+                                </ThemedView>
+                            </ThemedView>
+                        ))
+                    }
+                </ThemedView>
+                <ThemedView>
+                    <ThemedText>
+                        Relato de la/s situación/es
+                    </ThemedText>
+                    <TextInput style={styles.bigInputBox}/>
                 </ThemedView>
             </ThemedView>
         </ScrollView>
@@ -468,5 +589,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#123327',
         padding: 2
+    },
+    dropDownStyle: {
+        backgroundColor: JCA_BLUE,
+        padding: 12,
+        borderRadius: 15,
+        color: "white"
+    },
+    bigInputBox: {
+        width: 200,
+        height: 200,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginVertical: 5,
     }
 })

@@ -5,7 +5,7 @@ import { Image, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import { User } from "@/models/user.model";
 import { checkToken } from "@/utils/funcs";
-import { decodeToken } from "@/constants/constants";
+import { decodeToken, JCA_BLUE } from "@/constants/constants";
 import HolidaysTable from "@/components/holidaysTable";
 
 export default function LandingScreen() {
@@ -55,7 +55,9 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        width: '100%'
+        width: '100%',
+        backgroundColor: JCA_BLUE,
+        borderRadius: 35
     },
     dashboardGrid: {
         display: 'flex',
