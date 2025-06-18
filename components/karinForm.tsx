@@ -502,7 +502,7 @@ export default function KarinForm() {
                                 }} > Testigo {item+1} </ThemedText>
                                 <ThemedView>
                                     <ThemedText>Nombre y apellido</ThemedText>
-                                    <TextInput style={styles.inputBox}/>
+                                    <TextInput style={styles.inputBox} onChangeText={} />
                                 </ThemedView>
                                 <ThemedView>
                                     <ThemedText>Cargo</ThemedText>
